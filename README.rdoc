@@ -1,2 +1,1 @@
-= WillSearch
-doc
+= WillSearch - A wrapper for handeling sort_by params
