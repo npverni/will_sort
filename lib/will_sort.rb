@@ -6,24 +6,23 @@ module WillSort
 
   module ClassMethods
     
-    def will_sort(params)
-      get_search_order(params,self.default_sort_by,self.default_sort_dir)    
-    end
-
-    def get_search_conditions(params)
-      conditions = {}
-      self.searchable_fields.each do |p|
-        if self.param_exists(params,p)
-          conditions[p] = params[p]
-        end
-      end      
-      conditions
+    attr_accessor :use_default_sort_by, :use_default_sort_dir
+    
+    def will_sort(params,default='')
+      if !default.blank?
+        self.use_default_sort_by, self.use_default_sort_dir = default.split(" ")
+      else
+        self.use_default_sort_by = self.default_sort_by
+        self.use_default_sort_dir = self.default_sort_dir
+      end
+      get_search_order(params,self.use_default_sort_by,self.use_default_sort_dir)    
     end
 
     def get_search_order(params,default_sort_by,default_dir)
       sort_by =  safe_sort_param_or_default(params[:sort_by],default_sort_by)
       dir =      safe_sort_dir_or_default(params[:dir],default_dir)
       order = "#{sort_by} #{dir}"      
+      logger.warn('[WILL_SORT] sorting by: ' + order)
       return order
     end
 
